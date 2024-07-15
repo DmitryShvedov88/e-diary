@@ -38,11 +38,11 @@ COMMENDATIONS = [
 
 
 def find_scoolkid(name: str):
-    """Возращает экземпляр класса 'datacenter.models.Schoolkid или None'
+    """Возращает экземпляр класса str или None'
      Args:
         name (str): имя школьника
     Returns:
-        class 'datacenter.models.Schoolkid'или None
+        str или None
     Examples:
           >>> find_scoolkid('Фролов Иван')
         /Фролов Иван Григорьевич 6А
@@ -53,6 +53,7 @@ def find_scoolkid(name: str):
         print('Введите фамилию и имя ученика')
     else:
         try:
+            Schoolkid.objects.get(full_name__contains=name)
             return Schoolkid.objects.get(full_name__contains=name)
         except ObjectDoesNotExist:
             print("Either the entry or blog doesn't exist.")
@@ -72,7 +73,7 @@ def fix_marks(schoolkid: str) -> None:
           >>> fix_marks('Фролов Иван')
     """
     schoolkid_doc = find_scoolkid(schoolkid)
-    schoolkid_bad_marks = Mark.objects.filter(schoolkid=schoolkid_doc[0], points__in =[1, 2, 3])
+    schoolkid_bad_marks = Mark.objects.filter(schoolkid=schoolkid_doc, points__in =[1, 2, 3])
     for bad_mark in schoolkid_bad_marks:
         bad_mark.points = 5
         bad_mark.save()
@@ -88,7 +89,7 @@ def remove_chastisements(schoolkid: str) -> None:
           >>> remove_chastisements('Фролов Иван')
     """
     schoolkid_doc = find_scoolkid(schoolkid)
-    schoolkid_Chastisements = Chastisement.objects.filter(schoolkid=schoolkid_doc[0])
+    schoolkid_Chastisements = Chastisement.objects.filter(schoolkid=schoolkid_doc)
     schoolkid_Chastisements.delete()
 
 
@@ -103,12 +104,9 @@ def create_commendation(schoolkid: str, subject: str) -> None:
           >>> create_commendation('Фролов Иван', 'Математика')
     """
     schoolkid_doc = find_scoolkid(schoolkid)
-    lesson = Lesson.objects.filter(
-        year_of_study=schoolkid_doc.year_of_study,
-        group_letter=schoolkid_doc.group_letter,
-        ubject__title=subject
-        ).order_by('?').first()
-
+    lesson = Lesson.objects.filter(year_of_study=schoolkid_doc.year_of_study,
+                                        group_letter=schoolkid_doc.group_letter,
+                                        subject__title=subject).order_by('?').first()
     commendation = choice(COMMENDATIONS)
     Commendation.objects.create(text=commendation,
                                 created=lesson.date,
