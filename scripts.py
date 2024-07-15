@@ -37,7 +37,7 @@ COMMENDATIONS = [
     ]
 
 
-def find_scoolkid(name: str) -> Schoolkid | None:
+def find_scoolkid(name: str):
     """Возращает экземпляр класса 'datacenter.models.Schoolkid или None'
      Args:
         name (str): имя школьника
@@ -88,7 +88,7 @@ def remove_chastisements(schoolkid: str) -> None:
           >>> remove_chastisements('Фролов Иван')
     """
     schoolkid_doc = find_scoolkid(schoolkid)
-    schoolkid_Chastisements = Chastisement.objects.filter(schoolkid=schoolkid_doc)
+    schoolkid_Chastisements = Chastisement.objects.filter(schoolkid=schoolkid_doc[0])
     schoolkid_Chastisements.delete()
 
 
