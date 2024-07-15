@@ -52,10 +52,10 @@
 Для начала работы импортируйте необходимые модули можно импортирровать все сразу или только те, которые понадобятся для определенных функций.
 
         from datacenter.models import Schoolkid, Mark, Chastisement, Lesson, Commendation
-        from scripts import fix_marks, remove_chastisements, create_commendation
-
+        from scripts import fix_marks, remove_chastisements, create_commendation, find_scoolkid
+        
 ## Исправление оценок
-Исправляем оценки искомого ученика на 4, 5.
+Исправляем оценки искомого ученика на 5.
 Запускаем следующий код.
 
         fix_marks('Фролов Иван')

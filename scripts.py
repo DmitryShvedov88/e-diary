@@ -63,7 +63,7 @@ def find_scoolkid(name: str) -> Schoolkid | None:
 
 
 def fix_marks(schoolkid: str) -> None:
-    """Функция исправляет оценки ученика на 4 или 5
+    """Функция исправляет оценки ученика 5
     Args:
         name (str): имя школьника
     Returns:
@@ -72,8 +72,10 @@ def fix_marks(schoolkid: str) -> None:
           >>> fix_marks('Фролов Иван')
     """
     schoolkid_doc = find_scoolkid(schoolkid)
-    schoolkid_bad_marks = Mark.objects.filter(schoolkid=schoolkid_doc, points__in =[1, 2, 3])
-    schoolkid_bad_marks.update(points=choice(4,5))
+    schoolkid_bad_marks = Mark.objects.filter(schoolkid=schoolkid_doc[0], points__in =[1, 2, 3])
+    for bad_mark in schoolkid_bad_marks:
+        bad_mark.points = 5
+        bad_mark.save()
 
 
 def remove_chastisements(schoolkid: str) -> None:
