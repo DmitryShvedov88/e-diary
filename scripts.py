@@ -37,7 +37,7 @@ COMMENDATIONS = [
     ]
 
 
-def find_scoolkid(name: str) -> class | None:
+def find_scoolkid(name: str) -> Schoolkid | None:
     """Возращает экземпляр класса 'datacenter.models.Schoolkid или None'
      Args:
         name (str): имя школьника
