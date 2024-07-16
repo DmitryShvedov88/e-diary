@@ -37,8 +37,8 @@ COMMENDATIONS = [
     ]
 
 
-def find_scoolkid(name: str):
-    """Возращает экземпляр класса str или None'
+def find_scoolkid(name: str) -> Schoolkid | None:
+    """Возращает экземпляр класса Schoolkid или None'
      Args:
         name (str): имя школьника
     Returns:
