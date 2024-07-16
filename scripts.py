@@ -37,7 +37,7 @@ COMMENDATIONS = [
     ]
 
 
-def find_scoolkid(name: str) -> Schoolkid | None:
+def find_scoolkid(name: str): #-> Schoolkid | None:
     """Возращает экземпляр класса Schoolkid или None'
      Args:
         name (str): имя школьника
@@ -53,14 +53,11 @@ def find_scoolkid(name: str) -> Schoolkid | None:
         print('Введите фамилию и имя ученика')
     else:
         try:
-            Schoolkid.objects.get(full_name__contains=name)
             return Schoolkid.objects.get(full_name__contains=name)
-        except ObjectDoesNotExist:
-            print("Either the entry or blog doesn't exist.")
-            return
-        except MultipleObjectsReturned:
-            print("More than one object was found")
-            return
+        except Schoolkid.DoesNotExist:
+            raise Schoolkid.DoesNotExist(f'Schoolkid {name} doesn t found')
+        except  Schoolkid.MultipleObjectsReturned:
+            raise Schoolkid.MultipleObjectsReturned("More than one object was found")
 
 
 def fix_marks(schoolkid: str) -> None:
@@ -72,11 +69,9 @@ def fix_marks(schoolkid: str) -> None:
     Examples:
           >>> fix_marks('Фролов Иван')
     """
-    schoolkid_doc = find_scoolkid(schoolkid)
-    schoolkid_bad_marks = Mark.objects.filter(schoolkid=schoolkid_doc, points__in =[1, 2, 3])
-    for bad_mark in schoolkid_bad_marks:
-        bad_mark.points = 5
-        bad_mark.save()
+    schoolkid_card = find_scoolkid(schoolkid)
+    schoolkid_bad_marks = Mark.objects.filter(schoolkid=schoolkid_card, points__in =[1, 2, 3])
+    schoolkid_bad_marks.update(points=4)
 
 
 def remove_chastisements(schoolkid: str) -> None:
@@ -88,9 +83,9 @@ def remove_chastisements(schoolkid: str) -> None:
     Examples:
           >>> remove_chastisements('Фролов Иван')
     """
-    schoolkid_doc = find_scoolkid(schoolkid)
-    schoolkid_Chastisements = Chastisement.objects.filter(schoolkid=schoolkid_doc)
-    schoolkid_Chastisements.delete()
+    schoolkid_card = find_scoolkid(schoolkid)
+    schoolkid_chastisements = Chastisement.objects.filter(schoolkid=schoolkid_card)
+    schoolkid_chastisements.delete()
 
 
 def create_commendation(schoolkid: str, subject: str) -> None:
@@ -103,13 +98,13 @@ def create_commendation(schoolkid: str, subject: str) -> None:
     Examples:
           >>> create_commendation('Фролов Иван', 'Математика')
     """
-    schoolkid_doc = find_scoolkid(schoolkid)
-    lesson = Lesson.objects.filter(year_of_study=schoolkid_doc.year_of_study,
-                                        group_letter=schoolkid_doc.group_letter,
+    schoolkid_card = find_scoolkid(schoolkid)
+    lesson = Lesson.objects.filter(year_of_study=schoolkid_card.year_of_study,
+                                        group_letter=schoolkid_card.group_letter,
                                         subject__title=subject).order_by('?').first()
     commendation = choice(COMMENDATIONS)
     Commendation.objects.create(text=commendation,
                                 created=lesson.date,
-                                schoolkid=schoolkid_doc,
+                                schoolkid=schoolkid_card,
                                 subject=lesson.subject,
                                 teacher=lesson.teacher)
